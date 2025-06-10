@@ -9,6 +9,5 @@ target 'Demo' do
   pod 'Sundial', :path => '.', :inhibit_warnings => false
   pod 'SnapKit'
 
-  pod 'Astrolabe/Core', :git => 'git@github.com:netcosports/Astrolabe.git'
+  pod 'Astrolabe/Core', :git => 'git@github.com:Katterpillar/Astrolabe.git'
 end
-https://github.com/Katterpillar/Astrolabe

@@ -16,12 +16,10 @@ import RxCocoa
 public protocol Titleable {
   var title: String { get }
   var id: String { get }
-  var active: Bool { get }
 }
 
 public extension Titleable {
   var id: String { return title }
-  var active: Bool { return true }
 }
 
 // MARK: - Indicatorable
@@ -84,7 +82,7 @@ public enum Distribution {
 
 // MARK: - Anchor
 
-public enum Anchor: Equatable {
+public enum Anchor {
   case content(Distribution)
   case centered
   case fillEqual
@@ -93,24 +91,11 @@ public enum Anchor: Equatable {
   case right(offset: CGFloat)
 }
 
-// MARK: - PagerHeaderSupplementaryAlignment
+// MARK: - DecorationAlignment
 
-public enum PagerHeaderSupplementaryAlignment: Equatable {
+public enum DecorationAlignment {
   case top
-  case bottom
   case topOffset(behaviorRelay: BehaviorRelay<CGFloat>)
-
-  public static func == (lhs: PagerHeaderSupplementaryAlignment, rhs: PagerHeaderSupplementaryAlignment) -> Bool {
-    switch (lhs, rhs) {
-    case (.top, .top):
-      return true
-    case (.topOffset(let lBehaviorRelay), .topOffset(let rBehaviorRelay)):
-      return lBehaviorRelay === rBehaviorRelay
-    case (.bottom, .bottom):
-      return true
-    default: return false
-    }
-  }
 }
 
 // MARK: - JumpingPolicy
@@ -128,32 +113,17 @@ public enum JumpingPolicy: Equatable {
   }
 }
 
-// MARK: - Prepared
-
-public protocol PreparedLayout {
-
-  var readyObservable: Observable<Void> { get }
-}
-
-public extension Reactive where Base: PreparedLayout {
-
-  var ready: ControlEvent<Void> {
-    return ControlEvent(events: base.readyObservable)
-  }
-}
-
-
 // MARK: - Settings
 
-public struct Settings: Equatable {
+public struct Settings {
   public var stripHeight: CGFloat
   public var markerHeight: CGFloat
   public var itemMargin: CGFloat
-  public var stripInsets: UIEdgeInsets
+  public var bottomStripSpacing: CGFloat
   public var backgroundColor: UIColor
   public var anchor: Anchor
   public var inset: UIEdgeInsets
-  public var alignment: PagerHeaderSupplementaryAlignment
+  public var alignment: DecorationAlignment
   public var pagesOnScreen: Int {
     willSet {
       assert(newValue > 0, "number of pages on screen should be greater than 0")
@@ -165,26 +135,22 @@ public struct Settings: Equatable {
     }
   }
   public var shouldKeepFocusOnBoundsChange: Bool
-  public var numberOfTitlesWhenHidden: Int
-  public var pagerIndependentScrolling: Bool
 
   public init(stripHeight: CGFloat = 80.0,
               markerHeight: CGFloat = 5.5,
               itemMargin: CGFloat = 12.0,
-              stripInsets: UIEdgeInsets = .zero,
+              bottomStripSpacing: CGFloat = 0.0,
               backgroundColor: UIColor = .clear,
               anchor: Anchor = .centered,
               inset: UIEdgeInsets = .zero,
-              alignment: PagerHeaderSupplementaryAlignment = .top,
+              alignment: DecorationAlignment = .top,
               pagesOnScreen: Int = 1,
               jumpingPolicy: JumpingPolicy = .disabled,
-              shouldKeepFocusOnBoundsChange: Bool = false,
-              numberOfTitlesWhenHidden: Int = 0,
-              pagerIndependentScrolling: Bool = false) {
+              shouldKeepFocusOnBoundsChange: Bool = false) {
     self.stripHeight = stripHeight
     self.markerHeight = markerHeight
     self.itemMargin = itemMargin
-    self.stripInsets = stripInsets
+    self.bottomStripSpacing = bottomStripSpacing
     self.backgroundColor = backgroundColor
     self.anchor = anchor
     self.inset = inset
@@ -194,7 +160,9 @@ public struct Settings: Equatable {
     assert(jumpingPolicy == .disabled || pagesOnScreen == 1, "jumping policy doesn't support 2+ pages currently")
     self.jumpingPolicy = jumpingPolicy
     self.shouldKeepFocusOnBoundsChange = shouldKeepFocusOnBoundsChange
-    self.numberOfTitlesWhenHidden = numberOfTitlesWhenHidden
-    self.pagerIndependentScrolling = pagerIndependentScrolling
   }
 }
+
+public typealias DecorationView = GenericDecorationView<TitleCollectionViewCell, MarkerDecorationView<TitleCollectionViewCell.Data>, DecorationViewAttributes<TitleCollectionViewCell.Data>>
+public typealias CollectionViewLayout = GenericCollectionViewLayout<DecorationView>
+public typealias CollapsingCollectionViewLayout = GenericCollapsingCollectionViewLayout<DecorationView>

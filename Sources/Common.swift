@@ -12,8 +12,32 @@ import RxSwift
 import RxCocoa
 
 public protocol Markerable {
+
   associatedtype ViewModel: ViewModelable
+
   func apply(currentTitle: ViewModel?, nextTitle: ViewModel?, progress: CGFloat)
+}
+
+public protocol Attributable: class {
+
+  associatedtype TitleViewModel: Titleable
+
+  var titles: [TitleViewModel] { get set }
+  var selectionClosure: ((Int) -> Void)?  { get set }
+  var settings: Settings?  { get set }
+  var hostPagerSource: CollectionViewSource?  { get set }
+  var invalidateTabFrames: Bool { get set }
+//  var newCollectionViewWidth: CGFloat? { get set }
+
+}
+
+public let DecorationViewId = "DecorationView"
+
+public protocol DecorationViewPageable {
+
+  associatedtype TitleCell: CollectionViewCell, Reusable
+  associatedtype MarkerCell: CollectionViewCell
+  associatedtype Attributes: UICollectionViewLayoutAttributes, Attributable where TitleCell.Data == Attributes.TitleViewModel
 }
 
 public protocol CollapsingItem: class {
@@ -43,4 +67,11 @@ public extension CollapsingItem {
   func headerHeightDidChange(_ height: CGFloat) {
   }
 
+}
+
+
+public extension UIScrollView {
+    var isScrollingToTop: Bool {
+        return self.contentOffset.y <= -self.adjustedContentInset.top
+    }
 }

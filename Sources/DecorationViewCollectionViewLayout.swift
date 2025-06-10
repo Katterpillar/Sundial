@@ -1,8 +1,9 @@
 //
-//  PagerHeaderContentCollectionViewLayout.swift
+//  DecorationViewCollectionViewLayout.swift
 //  Sundial
 //
-//  Created by Sergei Mikhan on 8/23/19.
+//  Created by Sergei Mikhan on 8/1/17.
+//  Copyright © 2017 NetcoSports. All rights reserved.
 //
 
 import UIKit
@@ -10,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Astrolabe
 
-open class PagerHeaderContentCollectionViewLayout<TitleViewModel: ViewModelable, MarkerCell: CollectionViewCell>: UICollectionViewFlowLayout {
+open class DecorationViewCollectionViewLayout<TitleViewModel: ViewModelable, MarkerCell: CollectionViewCell>: UICollectionViewFlowLayout {
 
   open class InvalidationContext: UICollectionViewFlowLayoutInvalidationContext {
     public var newCollectionViewWidth: CGFloat?
@@ -270,6 +271,7 @@ open class PagerHeaderContentCollectionViewLayout<TitleViewModel: ViewModelable,
     if let markerAttributes = decorationAttributes(for: currentPages, nextPages: !nextPages.isEmpty ? nextPages : nil) {
       attributes.append(markerAttributes)
     }
+
     return attributes
   }
 
@@ -299,7 +301,7 @@ open class PagerHeaderContentCollectionViewLayout<TitleViewModel: ViewModelable,
 
 }
 
-extension PagerHeaderContentCollectionViewLayout {
+extension DecorationViewCollectionViewLayout {
 
   fileprivate func decorationAttributes(for currentPages: [TitleAttributes],
                                         nextPages: [TitleAttributes]?) -> MarkerDecorationAttributes<TitleViewModel, MarkerCell>? {
@@ -349,10 +351,7 @@ extension PagerHeaderContentCollectionViewLayout {
 
     switch anchor {
     case .content, .equal:
-      // FIXME: temporary workaround for the issue with autoscroll, MUST be fixed in correct way
-      DispatchQueue.main.async {
-        self.adjustContentOffset(for: decorationAttributes, collectionView: collectionView)
-      }
+      adjustContentOffset(for: decorationAttributes, collectionView: collectionView)
     case .centered:
       adjustCenteredContentOffset(for: decorationAttributes, collectionView: collectionView)
     case .left(let offset):
@@ -376,7 +375,6 @@ extension PagerHeaderContentCollectionViewLayout {
                                                collectionView: UICollectionView) {
     let target = CGPoint(x: decorationAttributes.frame.midX - (collectionView.frame.width) * 0.5, y: 0)
     collectionView.setContentOffset(target, animated: false)
-    collectionView.contentInset = .init(top: 0.0, left: -target.x, bottom: 0.0, right: 0.0)
   }
 
   fileprivate func adjustLeftContentOffset(for decorationAttributes: MarkerAttributes,
