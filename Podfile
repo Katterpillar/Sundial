@@ -1,7 +1,7 @@
 use_frameworks!
 
 inhibit_all_warnings!
-platform :ios, '10.0'
+platform :ios, '13.0'
 
 install! 'cocoapods', :disable_input_output_paths => true
 
@@ -11,3 +11,4 @@ target 'Demo' do
 
   pod 'Astrolabe/Core', :git => 'git@github.com:netcosports/Astrolabe.git'
 end
+https://github.com/Katterpillar/Astrolabe

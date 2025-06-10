@@ -1,17 +1,17 @@
-// swift-tools-version:5.0
+//swift-tools-version:5.9
 
 import PackageDescription
 
 let package = Package(
     name: "Sundial",
     platforms: [
-      .iOS(.v9)
+      .iOS(.v13)
     ],
     products: [
       .library(name: "Sundial", targets: ["Sundial"])
     ],
     dependencies: [
-      .package(url: "https://github.com/netcosports/Astrolabe.git", .upToNextMajor(from: "5.1.0"))
+      .package(url: "https://github.com/Katterpillar/Astrolabe.git", branch: "master")
     ],
     targets: [
       .target(name: "Sundial", dependencies: ["Astrolabe"], path: "./Sources")
